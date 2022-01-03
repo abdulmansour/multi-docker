@@ -1,0 +1,15 @@
+FROM node:16-alpine as builder
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "build"]
+
+FROM nginx:alpine
+# optional: expose 3000 is required for elasticbeanstalk to map to that port for incoming traffic
+EXPOSE 3000
+COPY --from=builder /app/build /usr/share/nginx/html
